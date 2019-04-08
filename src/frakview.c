@@ -1,5 +1,22 @@
-#include <SDL2/SDL.h>
+// Copyright (C) 2019 Patrick Ziegler
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 #include "ini.h"
+#include "version.h"
+#include <SDL2/SDL.h>
+#include <stdio.h>
 
 enum frakType {
     Mandelbrot,
@@ -203,6 +220,8 @@ tParam GetDefaultParam()
 
 int main(int argc, char *argv[])
 {
+    printf("FrakView v%s, Copyright (C) 2019 Patrick Ziegler\n", PROJECT_VERSION);
+
     SDL_Init(SDL_INIT_VIDEO);
 
 #if SDL_VERSION_ATLEAST(2, 0, 8)
@@ -217,19 +236,28 @@ int main(int argc, char *argv[])
     tParam param = GetDefaultParam();
 
     if (argc > 1) {
+        printf("Reading config '%s':", argv[1]);
+
         if (ini_parse(argv[1], ParseParameter, &param)) {
-            printf("Error reading %s\n", argv[1]);
+            printf(" FAILED\n");
             return 1;
+
         } else {
+            printf(" OK\n");
             strcpy(title, "FrakView (");
             strcat(title, argv[1]);
             strcat(title, ")");
         }
+
     } else {
         strcpy(title, "FrakView (default)");
     }
 
+    printf("Drawing fractal:");
+
     window = CreateView(title, &param);
+
+    printf(" OK\n");
 
     do {
         SDL_WaitEvent(&event);
@@ -237,6 +265,8 @@ int main(int argc, char *argv[])
 
     SDL_DestroyWindow(window);
     SDL_Quit();
+
+    printf("Program finished\n");
 
     return 0;
 }

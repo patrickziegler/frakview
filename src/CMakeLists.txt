@@ -2,11 +2,17 @@ find_package(SDL2 REQUIRED)
 
 add_executable(frakview)
 
-include_directories(${SDL2_INCLUDE_DIRS})
+target_include_directories(frakview PRIVATE ${SDL2_INCLUDE_DIRS})
+target_include_directories(frakview PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 
-target_sources(${PROJECT_NAME} PRIVATE
-    "${CMAKE_CURRENT_LIST_DIR}/frakview.c"
+target_sources(frakview PRIVATE
+    "frakview.c"
     )
 
-target_link_libraries(frakview inih)
-target_link_libraries(frakview ${SDL2_LIBRARIES})
+configure_file(
+    "version.h.in"
+    "version.h"
+    )
+
+target_link_libraries(frakview PRIVATE inih)
+target_link_libraries(frakview PRIVATE ${SDL2_LIBRARIES})
